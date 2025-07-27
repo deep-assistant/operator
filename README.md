@@ -9,7 +9,7 @@ For example it may be 100-1000 chats with real people in Telegram, VK, X. Or jus
 
 No notificatios, no distractions, just the work.
 
-User sees only one card at a time to focus. Once he does send a message or makes overwise the decision, this card goes to the and of the queue - or completely disappers (for example if no new answers are commint from humans in chats).
+User sees only one card at a time to focus. Once he does send a message or makes overwise the decision, this card goes to the and of the queue - or completely disappers (for example if no new answers are comming from humans in chats).
 
 That way the desicion making process is streamlined (it actually a single stream or queue of desicions). And no additional cognitive resources are wasted on the context switching itself.
 
