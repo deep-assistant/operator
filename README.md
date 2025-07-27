@@ -1,5 +1,5 @@
 # operator
-The UI for efficient AI operations
+The UI for efficient operations with humans and AIs.
 
 This UI should look like a queue of infinite cards/windows/chats and so on.
 
