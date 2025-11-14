@@ -5,67 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operator - Efficient Decision Making UI</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel Standalone for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-    <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <h1>Operator</h1>
-            <div class="controls">
-                <div class="view-toggle">
-                    <button id="focusMode" class="toggle-btn active">Focus Mode</button>
-                    <button id="listMode" class="toggle-btn">List Mode</button>
-                </div>
-                <div class="queue-info">
-                    <span class="queue-count">Queue: <span id="queueCount">0</span></span>
-                </div>
-            </div>
-        </header>
+    <div id="root"></div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- List View Sidebar (hidden in focus mode) -->
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <h2>Queue</h2>
-                </div>
-                <div class="card-list" id="cardList">
-                    <!-- Cards will be populated here -->
-                </div>
-            </aside>
-
-            <!-- Card Display Area -->
-            <main class="card-container" id="cardContainer">
-                <div class="empty-state" id="emptyState">
-                    <h2>No items in queue</h2>
-                    <p>All tasks completed!</p>
-                    <button class="btn-secondary" id="addSampleBtn">Add Sample Items</button>
-                </div>
-
-                <div class="card-view" id="cardView" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-source" id="cardSource"></div>
-                            <div class="card-time" id="cardTime"></div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-title" id="cardTitle"></h3>
-                            <div class="card-content" id="cardContent"></div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn-primary" id="doneBtn">
-                                <span>✓</span> DONE
-                            </button>
-                            <button class="btn-secondary" id="nextBtn">
-                                <span>→</span> NEXT
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+    <script type="text/babel" src="app.js"></script>
 </body>
 </html>
