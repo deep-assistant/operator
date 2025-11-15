@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X (Twitter) DMs - Focus Mode - API</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+
+    <!-- React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel Standalone for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="../../../shared/js/auth-utils.js"></script>
+    <script src="../../../shared/js/ui-components.js"></script>
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Custom content renderer for X DMs
+        function renderXContent(item) {
+            return React.createElement('div', null,
+                React.createElement('div', { className: 'message-content' }, item.text),
+                React.createElement('div', { className: 'user-info' },
+                    React.createElement('img', {
+                        src: item.sender.profile_image_url,
+                        alt: item.sender.username,
+                        className: 'user-avatar'
+                    }),
+                    React.createElement('div', null,
+                        React.createElement('div', { className: 'user-name' },
+                            item.sender.name,
+                            ' (@', item.sender.username, ')'
+                        ),
+                        React.createElement('div', {
+                            style: { fontSize: '0.875rem', color: 'var(--text-secondary)' }
+                        },
+                            React.createElement('span', {
+                                style: {
+                                    background: '#1d9bf0',
+                                    padding: '0.25rem 0.5rem',
+                                    borderRadius: '0.25rem',
+                                    fontSize: '0.75rem',
+                                    color: 'white'
+                                }
+                            }, 'UNREAD')
+                        )
+                    )
+                )
+            );
+        }
+
+        // Fetch X (Twitter) data (using mock data for demo)
+        async function fetchXData() {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const dms = MockDataGenerators.x.generateDMs(6);
+
+            return dms.map(dm => {
+                const timeAgo = new Date(dm.created_at);
+                const now = new Date();
+                const diffHours = Math.floor((now - timeAgo) / (1000 * 60 * 60));
+
+                return {
+                    ...dm,
+                    source: 'X (Twitter)',
+                    type: 'Direct Message',
+                    title: `DM from @${dm.sender.username}`,
+                    content: dm.text,
+                    time: diffHours < 1 ? 'Just now' :
+                           diffHours < 24 ? `${diffHours}h ago` :
+                           `${Math.floor(diffHours / 24)}d ago`,
+                    timeAgo: diffHours < 1 ? 'Just now' :
+                            diffHours < 24 ? `${diffHours}h ago` :
+                            `${Math.floor(diffHours / 24)}d ago`
+                };
+            });
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            React.createElement(CardsStreamApp, {
+                title: 'X DMs (Focus)',
+                fetchData: fetchXData,
+                renderContent: renderXContent,
+                platform: 'X (Twitter)'
+            })
+        );
+    </script>
+</body>
+</html>

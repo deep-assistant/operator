@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Messages - List + Sidebar - IFRAME</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+    <style>
+        .iframe-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .iframe-header {
+            padding: 1rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .iframe-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .current-item-info {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .sidebar {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a href="../../.." class="back-link" style="margin-right: 1rem;">← Back to Demos</a>
+                <h1>Telegram Messages (Embedded)</h1>
+            </div>
+            <div class="controls">
+                <div class="queue-info">
+                    <span class="queue-count">Queue: <span id="queue-count">0</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar active">
+                <div class="sidebar-header">
+                    <h2>Unread Dialogs</h2>
+                </div>
+                <div class="card-list" id="item-list"></div>
+            </aside>
+
+            <div class="iframe-container">
+                <div class="iframe-header">
+                    <h2 id="current-item-title">Telegram Web</h2>
+                    <div class="current-item-info" id="current-item-info">
+                        Embedded Telegram Web interface - log in to access your messages
+                    </div>
+                </div>
+                <iframe id="telegram-iframe" src="https://web.telegram.org"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample Telegram dialogs (in a real app, fetch from Telegram API)
+        const telegramDialogs = [
+            { user: 'Alex Johnson', username: 'alexj', preview: 'Hey! Did you see the presentation...', time: '2m ago' },
+            { user: 'Maria Garcia', username: 'mariag', preview: 'Can we schedule a meeting for...', time: '15m ago' },
+            { user: 'John Smith', username: 'johns', preview: 'The project deadline has been...', time: '1h ago' },
+            { user: 'Sarah Wilson', username: 'sarahw', preview: 'I have a quick question about...', time: '2h ago' },
+            { user: 'Mike Brown', username: 'mikeb', preview: 'Thanks for your help with the...', time: '3h ago' },
+            { user: 'Emma Davis', username: 'emmad', preview: 'Are you available for a quick...', time: '5h ago' },
+            { user: 'David Lee', username: 'davidl', preview: 'I sent you the updated design...', time: '6h ago' },
+            { user: 'Lisa Anderson', username: 'lisaa', preview: 'Let me know if you need any...', time: '8h ago' }
+        ];
+
+        let currentIndex = -1;
+
+        function renderList() {
+            const listContainer = document.getElementById('item-list');
+            listContainer.innerHTML = '';
+
+            telegramDialogs.forEach((dialog, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = `list-item ${index === currentIndex ? 'active' : ''}`;
+                itemEl.innerHTML = `
+                    <div class="list-item-header">
+                        <div class="list-item-source">@${dialog.username}</div>
+                        <div class="list-item-time">${dialog.time}</div>
+                    </div>
+                    <div class="list-item-title">${dialog.user}</div>
+                    <div class="list-item-preview">${dialog.preview}</div>
+                `;
+                itemEl.onclick = () => selectItem(index);
+                listContainer.appendChild(itemEl);
+            });
+
+            document.getElementById('queue-count').textContent = telegramDialogs.length;
+        }
+
+        function selectItem(index) {
+            currentIndex = index;
+            const dialog = telegramDialogs[index];
+
+            document.getElementById('current-item-title').textContent = `Chat with ${dialog.user}`;
+            document.getElementById('current-item-info').textContent = `@${dialog.username} - ${dialog.time}`;
+
+            renderList();
+        }
+
+        // Initial render
+        renderList();
+    </script>
+</body>
+</html>

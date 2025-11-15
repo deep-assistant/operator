@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Messages - List + Sidebar - API</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+
+    <!-- React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel Standalone for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="../../../shared/js/auth-utils.js"></script>
+    <script src="../../../shared/js/ui-components.js"></script>
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Custom content renderer for Telegram messages
+        function renderTelegramContent(item) {
+            return React.createElement('div', null,
+                React.createElement('div', { className: 'message-content' }, item.text),
+                React.createElement('div', { className: 'message-meta' },
+                    React.createElement('div', null,
+                        React.createElement('strong', null, 'From: '),
+                        item.from.first_name,
+                        ' (@', item.from.username, ')'
+                    ),
+                    React.createElement('div', null,
+                        React.createElement('span', {
+                            style: {
+                                background: '#10b981',
+                                padding: '0.25rem 0.5rem',
+                                borderRadius: '0.25rem',
+                                fontSize: '0.75rem',
+                                color: 'white'
+                            }
+                        }, 'UNREAD')
+                    )
+                )
+            );
+        }
+
+        // Fetch Telegram data (using mock data for demo)
+        async function fetchTelegramData() {
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // In a real app, you would:
+            // 1. Authenticate with Telegram API
+            // 2. Fetch unread messages
+            // const messages = await telegramClient.getUnreadMessages();
+
+            // For demo, use mock data
+            const messages = MockDataGenerators.telegram.generateMessages(8);
+
+            // Format data
+            return messages.map(msg => {
+                const timeAgo = Date.now() / 1000 - msg.date;
+                const hours = Math.floor(timeAgo / 3600);
+
+                return {
+                    ...msg,
+                    source: 'Telegram',
+                    type: 'Private Message',
+                    title: `Message from ${msg.from.first_name}`,
+                    content: msg.text,
+                    time: hours < 1 ? 'Just now' :
+                           hours < 24 ? `${hours}h ago` :
+                           `${Math.floor(hours / 24)}d ago`,
+                    timeAgo: hours < 1 ? 'Just now' :
+                            hours < 24 ? `${hours}h ago` :
+                            `${Math.floor(hours / 24)}d ago`
+                };
+            });
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            React.createElement(ListSidebarApp, {
+                title: 'Telegram Private Messages',
+                fetchData: fetchTelegramData,
+                renderContent: renderTelegramContent,
+                platform: 'Telegram'
+            })
+        );
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VK Messages - Focus Mode - IFRAME</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+    <style>
+        .focus-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .focus-card {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: var(--surface);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .focus-header {
+            padding: 1.5rem 2rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .focus-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .focus-meta {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .focus-footer {
+            padding: 1.5rem 2rem;
+            background: var(--background);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .queue-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--surface);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a href="../../.." class="back-link" style="margin-right: 1rem;">← Back to Demos</a>
+                <h1>VK Messages (Focus + Embedded)</h1>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="focus-container">
+                <div class="queue-indicator">
+                    <span id="queue-indicator">Item 1 of 8</span>
+                </div>
+
+                <div class="focus-card">
+                    <div class="focus-header">
+                        <h2 id="current-title">VK Messages</h2>
+                        <div class="focus-meta" id="current-meta">Log in to view your unread messages</div>
+                    </div>
+                    <iframe id="vk-iframe" src="https://vk.com/im"></iframe>
+                    <div class="focus-footer">
+                        <button class="btn-primary" onclick="handleDone()">
+                            <span>✓</span> DONE
+                        </button>
+                        <button class="btn-secondary" onclick="handleNext()">
+                            <span>→</span> NEXT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vkDialogs = [
+            { user: 'Dmitry Ivanov', id: 12345, time: '5m ago' },
+            { user: 'Anna Petrova', id: 23456, time: '20m ago' },
+            { user: 'Pavel Sokolov', id: 34567, time: '1h ago' },
+            { user: 'Olga Smirnova', id: 45678, time: '2h ago' },
+            { user: 'Igor Volkov', id: 56789, time: '4h ago' },
+            { user: 'Natalia Kozlova', id: 67890, time: '5h ago' },
+            { user: 'Sergey Novikov', id: 78901, time: '7h ago' },
+            { user: 'Elena Morozova', id: 89012, time: '9h ago' }
+        ];
+
+        let currentIndex = 0;
+
+        function showCurrentItem() {
+            if (vkDialogs.length === 0) {
+                document.getElementById('current-title').textContent = 'All done!';
+                document.getElementById('current-meta').textContent = 'No more messages to process';
+                return;
+            }
+
+            const dialog = vkDialogs[currentIndex];
+            document.getElementById('current-title').textContent = `Chat with ${dialog.user}`;
+            document.getElementById('current-meta').textContent = `VK ID: ${dialog.id} - ${dialog.time}`;
+            document.getElementById('queue-indicator').textContent = `Item ${currentIndex + 1} of ${vkDialogs.length}`;
+        }
+
+        function handleDone() {
+            if (vkDialogs.length === 0) return;
+            vkDialogs.splice(currentIndex, 1);
+            if (currentIndex >= vkDialogs.length && currentIndex > 0) {
+                currentIndex = vkDialogs.length - 1;
+            }
+            showCurrentItem();
+        }
+
+        function handleNext() {
+            if (vkDialogs.length === 0) return;
+            const item = vkDialogs.splice(currentIndex, 1)[0];
+            vkDialogs.push(item);
+            showCurrentItem();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                handleDone();
+            } else if (e.key === 'n' || e.key === 'N' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                handleNext();
+            }
+        });
+
+        showCurrentItem();
+    </script>
+</body>
+</html>

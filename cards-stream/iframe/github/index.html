@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Issues/PRs - Focus Mode - IFRAME</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+    <style>
+        .focus-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .focus-card {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: var(--surface);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .focus-header {
+            padding: 1.5rem 2rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .focus-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .focus-meta {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .focus-footer {
+            padding: 1.5rem 2rem;
+            background: var(--background);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .queue-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--surface);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a href="../../.." class="back-link" style="margin-right: 1rem;">← Back to Demos</a>
+                <h1>GitHub Issues & PRs (Focus + Embedded)</h1>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="focus-container">
+                <div class="queue-indicator">
+                    <span id="queue-indicator">Item 1 of 5</span>
+                </div>
+
+                <div class="focus-card">
+                    <div class="focus-header">
+                        <h2 id="current-title">Loading...</h2>
+                        <div class="focus-meta" id="current-meta">Please wait...</div>
+                    </div>
+                    <iframe id="github-iframe" src="about:blank"></iframe>
+                    <div class="focus-footer">
+                        <button class="btn-primary" onclick="handleDone()">
+                            <span>✓</span> DONE
+                        </button>
+                        <button class="btn-secondary" onclick="handleNext()">
+                            <span>→</span> NEXT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const githubItems = [
+            {
+                type: 'Issue',
+                number: 1234,
+                title: 'Bug: Login form not responsive on mobile',
+                repo: 'facebook/react',
+                url: 'https://github.com/facebook/react/issues/1234'
+            },
+            {
+                type: 'PR',
+                number: 5678,
+                title: 'Feature: Add dark mode support',
+                repo: 'microsoft/vscode',
+                url: 'https://github.com/microsoft/vscode/pull/5678'
+            },
+            {
+                type: 'Issue',
+                number: 9012,
+                title: 'Performance: Slow API response times',
+                repo: 'vercel/next.js',
+                url: 'https://github.com/vercel/next.js/issues/9012'
+            },
+            {
+                type: 'Issue',
+                number: 3456,
+                title: 'Documentation: Update installation guide',
+                repo: 'nodejs/node',
+                url: 'https://github.com/nodejs/node/issues/3456'
+            },
+            {
+                type: 'PR',
+                number: 7890,
+                title: 'Fix: Security vulnerability in dependencies',
+                repo: 'vuejs/vue',
+                url: 'https://github.com/vuejs/vue/pull/7890'
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function showCurrentItem() {
+            if (githubItems.length === 0) {
+                document.getElementById('current-title').textContent = 'All done!';
+                document.getElementById('current-meta').textContent = 'No more items to process';
+                document.getElementById('github-iframe').src = 'about:blank';
+                return;
+            }
+
+            const item = githubItems[currentIndex];
+            document.getElementById('current-title').textContent = `${item.type} #${item.number}: ${item.title}`;
+            document.getElementById('current-meta').textContent = `Repository: ${item.repo}`;
+            document.getElementById('queue-indicator').textContent = `Item ${currentIndex + 1} of ${githubItems.length}`;
+            document.getElementById('github-iframe').src = item.url;
+        }
+
+        function handleDone() {
+            if (githubItems.length === 0) return;
+            githubItems.splice(currentIndex, 1);
+            if (currentIndex >= githubItems.length && currentIndex > 0) {
+                currentIndex = githubItems.length - 1;
+            }
+            showCurrentItem();
+        }
+
+        function handleNext() {
+            if (githubItems.length === 0) return;
+            const item = githubItems.splice(currentIndex, 1)[0];
+            githubItems.push(item);
+            showCurrentItem();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                handleDone();
+            } else if (e.key === 'n' || e.key === 'N' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                handleNext();
+            }
+        });
+
+        // Initial load
+        showCurrentItem();
+    </script>
+</body>
+</html>

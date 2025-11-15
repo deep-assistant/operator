@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Messages - Focus Mode - IFRAME</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+    <style>
+        .focus-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .focus-card {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: var(--surface);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .focus-header {
+            padding: 1.5rem 2rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .focus-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .focus-meta {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .focus-footer {
+            padding: 1.5rem 2rem;
+            background: var(--background);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .queue-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--surface);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a href="../../.." class="back-link" style="margin-right: 1rem;">← Back to Demos</a>
+                <h1>Telegram Messages (Focus + Embedded)</h1>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="focus-container">
+                <div class="queue-indicator">
+                    <span id="queue-indicator">Item 1 of 8</span>
+                </div>
+
+                <div class="focus-card">
+                    <div class="focus-header">
+                        <h2 id="current-title">Telegram Web</h2>
+                        <div class="focus-meta" id="current-meta">Log in to view your unread messages</div>
+                    </div>
+                    <iframe id="telegram-iframe" src="https://web.telegram.org"></iframe>
+                    <div class="focus-footer">
+                        <button class="btn-primary" onclick="handleDone()">
+                            <span>✓</span> DONE
+                        </button>
+                        <button class="btn-secondary" onclick="handleNext()">
+                            <span>→</span> NEXT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const telegramDialogs = [
+            { user: 'Alex Johnson', username: 'alexj', time: '2m ago' },
+            { user: 'Maria Garcia', username: 'mariag', time: '15m ago' },
+            { user: 'John Smith', username: 'johns', time: '1h ago' },
+            { user: 'Sarah Wilson', username: 'sarahw', time: '2h ago' },
+            { user: 'Mike Brown', username: 'mikeb', time: '3h ago' },
+            { user: 'Emma Davis', username: 'emmad', time: '5h ago' },
+            { user: 'David Lee', username: 'davidl', time: '6h ago' },
+            { user: 'Lisa Anderson', username: 'lisaa', time: '8h ago' }
+        ];
+
+        let currentIndex = 0;
+
+        function showCurrentItem() {
+            if (telegramDialogs.length === 0) {
+                document.getElementById('current-title').textContent = 'All done!';
+                document.getElementById('current-meta').textContent = 'No more messages to process';
+                return;
+            }
+
+            const dialog = telegramDialogs[currentIndex];
+            document.getElementById('current-title').textContent = `Chat with ${dialog.user}`;
+            document.getElementById('current-meta').textContent = `@${dialog.username} - ${dialog.time}`;
+            document.getElementById('queue-indicator').textContent = `Item ${currentIndex + 1} of ${telegramDialogs.length}`;
+        }
+
+        function handleDone() {
+            if (telegramDialogs.length === 0) return;
+            telegramDialogs.splice(currentIndex, 1);
+            if (currentIndex >= telegramDialogs.length && currentIndex > 0) {
+                currentIndex = telegramDialogs.length - 1;
+            }
+            showCurrentItem();
+        }
+
+        function handleNext() {
+            if (telegramDialogs.length === 0) return;
+            const item = telegramDialogs.splice(currentIndex, 1)[0];
+            telegramDialogs.push(item);
+            showCurrentItem();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                handleDone();
+            } else if (e.key === 'n' || e.key === 'N' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                handleNext();
+            }
+        });
+
+        showCurrentItem();
+    </script>
+</body>
+</html>
