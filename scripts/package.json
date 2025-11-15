@@ -1,0 +1,23 @@
+{
+  "name": "operator-testing",
+  "version": "1.0.0",
+  "description": "Testing utilities for Operator demo pages",
+  "type": "module",
+  "scripts": {
+    "test": "node test-all-demos.js",
+    "test:visual": "node test-visual.js",
+    "test:landing": "node test-landing.js",
+    "test:screenshots": "node test-screenshots.js",
+    "validate": "node validate-html.js",
+    "quality": "node check-quality.js",
+    "verify": "node verify-setup.js",
+    "test:local": "node test-local.js",
+    "check:all": "npm run validate && npm run quality"
+  },
+  "keywords": ["testing", "playwright", "demo"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}

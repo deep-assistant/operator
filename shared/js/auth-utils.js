@@ -185,7 +185,8 @@ const MockDataGenerators = {
                         avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=pr${i}`
                     },
                     created_at: new Date(Date.now() - i * 7200000).toISOString(),
-                    state: 'open'
+                    state: 'open',
+                    pull_request: { url: `https://api.github.com/pulls/${50 + i}` }
                 });
             }
             return prs;
