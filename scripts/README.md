@@ -1,29 +1,97 @@
 # Operator Testing Scripts
 
-Automated testing utilities for the Operator demo pages using Playwright.
+Comprehensive testing utilities for the Operator demo pages with multiple testing approaches.
 
-## Setup
+## Quick Start
 
 ```bash
 cd scripts
 npm install
+
+# Run the working tests (no browser required)
+npm run validate      # HTML validation
+npm run quality       # Code quality checks
+
+# For full browser testing, see "Browser Testing Limitations" below
 ```
+
+## ⚠️ Important: Browser Testing Limitations
+
+**Browser automation (Playwright/Puppeteer) does NOT work in Claude Code sandbox** due to Chromium crashes. See `BROWSER_TESTING_LIMITATIONS.md` for details.
+
+**What works:**
+- ✅ Static HTML validation
+- ✅ Code quality checks
+- ✅ curl-based live site testing
+- ✅ Manual code review
+
+**What doesn't work in this environment:**
+- ❌ Playwright browser automation
+- ❌ Puppeteer browser automation
+- ❌ Visual rendering tests
+- ❌ Screenshot generation
 
 ## Available Tests
 
-### 1. Complete Test Suite
-Run all tests across all demo pages:
+### Tests That Work ✅
+
+#### 1. HTML Validation
+Validates all 17 HTML files for structure and syntax:
 ```bash
-npm test
+npm run validate
 ```
 
-This will:
-- Test all 17 pages (1 landing + 16 demos)
-- Check for HTTP errors
-- Detect JavaScript errors
-- Verify page content
-- Capture screenshots
-- Generate detailed report
+Results: **17/17 passed**
+
+#### 2. Code Quality Checks
+Checks accessibility, SEO, responsive design, and performance:
+```bash
+npm run quality
+```
+
+Results: **0 critical issues, 49 minor warnings**
+
+#### 3. Live Site Testing (curl-based)
+Tests all 17 pages on the live site without browser:
+```bash
+node test-with-curl.js
+```
+
+This verifies:
+- ✅ All pages return HTTP 200 OK
+- ✅ All page titles correct
+- ✅ All HTML structure valid
+- ✅ React dependencies referenced
+- ✅ CSS stylesheets referenced
+- ✅ Landing page has 16 demo cards
+
+Results: **17/17 passed**
+
+### Tests That Require Normal Environment ❌
+
+The following tests require Playwright/Puppeteer and **will not work in Claude Code sandbox**:
+
+#### 1. Complete Test Suite
+```bash
+npm test  # Requires browser - will fail in sandbox
+```
+
+#### 2. Visual Testing
+```bash
+npm run test:visual  # Requires browser - will fail in sandbox
+```
+
+#### 3. Screenshot Generation
+```bash
+npm run test:screenshots  # Requires browser - will fail in sandbox
+```
+
+#### 4. Landing Page Browser Tests
+```bash
+npm run test:landing  # Requires browser - will fail in sandbox
+```
+
+**To run these:** Clone the repo locally or use standard CI/CD
 
 ### 2. Visual Testing
 Capture screenshots across multiple viewports:
@@ -127,18 +195,54 @@ After running tests:
 - Playwright (automatically installed)
 - Internet connection (to access GitHub Pages)
 
+## Running Tests in Normal Environment
+
+To run full browser tests outside of Claude Code:
+
+```bash
+# Clone the repository
+git clone https://github.com/deep-assistant/operator.git
+cd operator/scripts
+
+# Install dependencies
+npm install
+npx playwright install chromium
+
+# Run browser tests (will work now)
+npm test
+npm run test:visual
+npm run test:screenshots
+
+# Or test manually in browser
+python3 -m http.server 8080
+# Open http://localhost:8080 in your browser
+```
+
 ## Troubleshooting
 
-### Tests timeout
+### In Claude Code Sandbox
+
+**Problem:** Playwright/Puppeteer tests fail with "Page crashed" or "ERR_TUNNEL_CONNECTION_FAILED"
+
+**Solution:** This is expected. Use the curl-based tests instead:
+```bash
+node test-with-curl.js
+npm run validate
+npm run quality
+```
+
+### In Normal Environment
+
+**Tests timeout:**
 Increase timeout in test files if needed:
 ```javascript
 timeout: 30000 // 30 seconds
 ```
 
-### Screenshots not generated
+**Screenshots not generated:**
 Ensure the `screenshots/` directory is writable.
 
-### Network errors
+**Network errors:**
 Check internet connection and verify the site is accessible:
 ```bash
 curl -I https://deep-assistant.github.io/operator/
