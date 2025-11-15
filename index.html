@@ -3,18 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operator - Efficient Decision Making UI</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Operator - Demo Selection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <!-- React and ReactDOM from CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel Standalone for JSX transformation -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .description {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .demo-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-color);
+        }
+
+        .demo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .demo-card .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .badge.api {
+            background: #059669;
+            color: white;
+        }
+
+        .badge.iframe {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .demo-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .demo-card .platforms {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .platform-tag {
+            background: var(--background);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+        }
+
+        .ui-mode-section {
+            margin-bottom: 4rem;
+        }
+
+        .legend {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .legend h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-item .badge {
+            margin: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="container">
+        <header>
+            <h1>Operator</h1>
+            <p class="subtitle">Queue-based Decision Making UI</p>
+            <div class="description">
+                <p>Choose from various demo configurations to see how Operator handles different platforms and integration methods. Each demo focuses on processing unread messages and unprocessed items efficiently.</p>
+            </div>
+        </header>
 
-    <script type="text/babel" src="app.js"></script>
+        <div class="legend">
+            <h4>Integration Types</h4>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <span class="badge api">API</span>
+                    <span>Direct API integration with browser authentication</span>
+                </div>
+                <div class="legend-item">
+                    <span class="badge iframe">IFRAME</span>
+                    <span>Embedded web interface version</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- List + Sidebar Mode -->
+        <div class="ui-mode-section">
+            <h2 class="section-title">List + Sidebar Mode</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">View all items in a sidebar list while working on the selected item in the main area.</p>
+
+            <div class="demo-grid">
+                <a href="list-sidebar/api/github/index.html">
+                    <div class="demo-card">
+                        <h3>GitHub Issues/PRs</h3>
+                        <span class="badge api">API</span>
+                        <p>Process unprocessed GitHub issues and pull requests with OAuth authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">GitHub OAuth</span>
+                            <span class="platform-tag">Issues</span>
+                            <span class="platform-tag">Pull Requests</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/api/telegram/index.html">
+                    <div class="demo-card">
+                        <h3>Telegram Messages</h3>
+                        <span class="badge api">API</span>
+                        <p>Handle unread private messages from Telegram with API authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Telegram API</span>
+                            <span class="platform-tag">Private Messages</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/api/vk/index.html">
+                    <div class="demo-card">
+                        <h3>VK Messages</h3>
+                        <span class="badge api">API</span>
+                        <p>Process unread VK private messages with VK API authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">VK API</span>
+                            <span class="platform-tag">Private Messages</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/api/x/index.html">
+                    <div class="demo-card">
+                        <h3>X (Twitter) DMs</h3>
+                        <span class="badge api">API</span>
+                        <p>Manage unread direct messages from X with OAuth authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">X OAuth</span>
+                            <span class="platform-tag">Direct Messages</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/iframe/github/index.html">
+                    <div class="demo-card">
+                        <h3>GitHub Issues/PRs</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded GitHub interface for processing issues and pull requests.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/iframe/telegram/index.html">
+                    <div class="demo-card">
+                        <h3>Telegram Messages</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded Telegram Web interface for private messages.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/iframe/vk/index.html">
+                    <div class="demo-card">
+                        <h3>VK Messages</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded VK interface for processing private messages.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="list-sidebar/iframe/x/index.html">
+                    <div class="demo-card">
+                        <h3>X (Twitter) DMs</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded X interface for managing direct messages.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cards Stream (Focus) Mode -->
+        <div class="ui-mode-section">
+            <h2 class="section-title">Cards Stream (Focus) Mode</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">See one card at a time for maximum focus. Perfect for rapid decision making.</p>
+
+            <div class="demo-grid">
+                <a href="cards-stream/api/github/index.html">
+                    <div class="demo-card">
+                        <h3>GitHub Issues/PRs</h3>
+                        <span class="badge api">API</span>
+                        <p>Process unprocessed GitHub issues and pull requests with OAuth authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">GitHub OAuth</span>
+                            <span class="platform-tag">Issues</span>
+                            <span class="platform-tag">Pull Requests</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/api/telegram/index.html">
+                    <div class="demo-card">
+                        <h3>Telegram Messages</h3>
+                        <span class="badge api">API</span>
+                        <p>Handle unread private messages from Telegram with API authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Telegram API</span>
+                            <span class="platform-tag">Private Messages</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/api/vk/index.html">
+                    <div class="demo-card">
+                        <h3>VK Messages</h3>
+                        <span class="badge api">API</span>
+                        <p>Process unread VK private messages with VK API authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">VK API</span>
+                            <span class="platform-tag">Private Messages</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/api/x/index.html">
+                    <div class="demo-card">
+                        <h3>X (Twitter) DMs</h3>
+                        <span class="badge api">API</span>
+                        <p>Manage unread direct messages from X with OAuth authentication.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">X OAuth</span>
+                            <span class="platform-tag">Direct Messages</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/iframe/github/index.html">
+                    <div class="demo-card">
+                        <h3>GitHub Issues/PRs</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded GitHub interface for processing issues and pull requests.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/iframe/telegram/index.html">
+                    <div class="demo-card">
+                        <h3>Telegram Messages</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded Telegram Web interface for private messages.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/iframe/vk/index.html">
+                    <div class="demo-card">
+                        <h3>VK Messages</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded VK interface for processing private messages.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="cards-stream/iframe/x/index.html">
+                    <div class="demo-card">
+                        <h3>X (Twitter) DMs</h3>
+                        <span class="badge iframe">IFRAME</span>
+                        <p>Embedded X interface for managing direct messages.</p>
+                        <div class="platforms">
+                            <span class="platform-tag">Embedded</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VK Messages - List + Sidebar - IFRAME</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+    <style>
+        .iframe-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .iframe-header {
+            padding: 1rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .iframe-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .current-item-info {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .sidebar {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a href="../../.." class="back-link" style="margin-right: 1rem;">← Back to Demos</a>
+                <h1>VK Messages (Embedded)</h1>
+            </div>
+            <div class="controls">
+                <div class="queue-info">
+                    <span class="queue-count">Queue: <span id="queue-count">0</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar active">
+                <div class="sidebar-header">
+                    <h2>Unread Messages</h2>
+                </div>
+                <div class="card-list" id="item-list"></div>
+            </aside>
+
+            <div class="iframe-container">
+                <div class="iframe-header">
+                    <h2 id="current-item-title">VK Messages</h2>
+                    <div class="current-item-info" id="current-item-info">
+                        Embedded VK interface - log in to access your messages
+                    </div>
+                </div>
+                <iframe id="vk-iframe" src="https://vk.com/im"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample VK dialogs (in a real app, fetch from VK API)
+        const vkDialogs = [
+            { user: 'Dmitry Ivanov', id: 12345, preview: 'Привет! Как дела?', time: '5m ago' },
+            { user: 'Anna Petrova', id: 23456, preview: 'Ты видел новости о проекте?', time: '20m ago' },
+            { user: 'Pavel Sokolov', id: 34567, preview: 'Давай встретимся завтра?', time: '1h ago' },
+            { user: 'Olga Smirnova', id: 45678, preview: 'Отправил тебе документы.', time: '2h ago' },
+            { user: 'Igor Volkov', id: 56789, preview: 'Спасибо за помощь!', time: '4h ago' },
+            { user: 'Natalia Kozlova', id: 67890, preview: 'Можешь позвонить?', time: '5h ago' },
+            { user: 'Sergey Novikov', id: 78901, preview: 'Нужна твоя консультация.', time: '7h ago' },
+            { user: 'Elena Morozova', id: 89012, preview: 'Всё готово к презентации.', time: '9h ago' }
+        ];
+
+        let currentIndex = -1;
+
+        function renderList() {
+            const listContainer = document.getElementById('item-list');
+            listContainer.innerHTML = '';
+
+            vkDialogs.forEach((dialog, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = `list-item ${index === currentIndex ? 'active' : ''}`;
+                itemEl.innerHTML = `
+                    <div class="list-item-header">
+                        <div class="list-item-source">ID: ${dialog.id}</div>
+                        <div class="list-item-time">${dialog.time}</div>
+                    </div>
+                    <div class="list-item-title">${dialog.user}</div>
+                    <div class="list-item-preview">${dialog.preview}</div>
+                `;
+                itemEl.onclick = () => selectItem(index);
+                listContainer.appendChild(itemEl);
+            });
+
+            document.getElementById('queue-count').textContent = vkDialogs.length;
+        }
+
+        function selectItem(index) {
+            currentIndex = index;
+            const dialog = vkDialogs[index];
+
+            document.getElementById('current-item-title').textContent = `Chat with ${dialog.user}`;
+            document.getElementById('current-item-info').textContent = `VK ID: ${dialog.id} - ${dialog.time}`;
+
+            renderList();
+        }
+
+        // Initial render
+        renderList();
+    </script>
+</body>
+</html>

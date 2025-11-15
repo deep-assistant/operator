@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Issues/PRs - Focus Mode - API</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+
+    <!-- React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel Standalone for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="../../../shared/js/auth-utils.js"></script>
+    <script src="../../../shared/js/ui-components.js"></script>
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Custom content renderer for GitHub issues/PRs
+        function renderGitHubContent(item) {
+            return React.createElement('div', null,
+                React.createElement('div', { className: 'card-content' }, item.body),
+                item.labels && item.labels.length > 0 &&
+                    React.createElement('div', { className: 'issue-labels' },
+                        item.labels.map((label, idx) =>
+                            React.createElement('span', {
+                                key: idx,
+                                className: `label ${label}`
+                            }, label)
+                        )
+                    ),
+                React.createElement('div', { className: 'user-info' },
+                    React.createElement('img', {
+                        src: item.user.avatar_url,
+                        alt: item.user.login,
+                        className: 'user-avatar'
+                    }),
+                    React.createElement('div', null,
+                        React.createElement('div', { className: 'user-name' }, item.user.login),
+                        React.createElement('div', {
+                            style: { fontSize: '0.875rem', color: 'var(--text-secondary)' }
+                        }, `#${item.number}`)
+                    )
+                )
+            );
+        }
+
+        // Fetch GitHub data (using mock data for demo)
+        async function fetchGitHubData() {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const issues = MockDataGenerators.github.generateIssues(5);
+            const prs = MockDataGenerators.github.generatePullRequests(3);
+
+            const combined = [...issues, ...prs].map(item => {
+                const timeAgo = new Date(item.created_at);
+                const now = new Date();
+                const diffHours = Math.floor((now - timeAgo) / (1000 * 60 * 60));
+
+                return {
+                    ...item,
+                    source: item.pull_request ? 'Pull Request' : 'Issue',
+                    type: item.pull_request ? 'Pull Request' : 'Issue',
+                    title: item.title,
+                    content: item.body,
+                    time: diffHours < 1 ? 'Just now' :
+                           diffHours < 24 ? `${diffHours}h ago` :
+                           `${Math.floor(diffHours / 24)}d ago`,
+                    timeAgo: diffHours < 1 ? 'Just now' :
+                            diffHours < 24 ? `${diffHours}h ago` :
+                            `${Math.floor(diffHours / 24)}d ago`
+                };
+            });
+
+            return combined;
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            React.createElement(CardsStreamApp, {
+                title: 'GitHub Issues & PRs (Focus)',
+                fetchData: fetchGitHubData,
+                renderContent: renderGitHubContent,
+                platform: 'GitHub'
+            })
+        );
+    </script>
+</body>
+</html>

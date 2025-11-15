@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Issues/PRs - List + Sidebar - IFRAME</title>
+    <link rel="stylesheet" href="../../../shared/css/operator.css">
+    <style>
+        .iframe-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .iframe-header {
+            padding: 1rem 2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .iframe-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .current-item-info {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background: white;
+        }
+
+        .sidebar {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-left">
+                <a href="../../.." class="back-link" style="margin-right: 1rem;">← Back to Demos</a>
+                <h1>GitHub Issues & PRs (Embedded)</h1>
+            </div>
+            <div class="controls">
+                <div class="queue-info">
+                    <span class="queue-count">Queue: <span id="queue-count">0</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar active">
+                <div class="sidebar-header">
+                    <h2>Unprocessed Items</h2>
+                </div>
+                <div class="card-list" id="item-list"></div>
+            </aside>
+
+            <div class="iframe-container">
+                <div class="iframe-header">
+                    <h2 id="current-item-title">Select an item from the list</h2>
+                    <div class="current-item-info" id="current-item-info">
+                        Click on an issue or pull request to view it
+                    </div>
+                </div>
+                <iframe id="github-iframe" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample GitHub items (in a real app, fetch from GitHub API)
+        const githubItems = [
+            {
+                type: 'Issue',
+                number: 1234,
+                title: 'Bug: Login form not responsive on mobile',
+                repo: 'facebook/react',
+                url: 'https://github.com/facebook/react/issues/1234'
+            },
+            {
+                type: 'PR',
+                number: 5678,
+                title: 'Feature: Add dark mode support',
+                repo: 'microsoft/vscode',
+                url: 'https://github.com/microsoft/vscode/pull/5678'
+            },
+            {
+                type: 'Issue',
+                number: 9012,
+                title: 'Performance: Slow API response times',
+                repo: 'vercel/next.js',
+                url: 'https://github.com/vercel/next.js/issues/9012'
+            },
+            {
+                type: 'Issue',
+                number: 3456,
+                title: 'Documentation: Update installation guide',
+                repo: 'nodejs/node',
+                url: 'https://github.com/nodejs/node/issues/3456'
+            },
+            {
+                type: 'PR',
+                number: 7890,
+                title: 'Fix: Security vulnerability in dependencies',
+                repo: 'vuejs/vue',
+                url: 'https://github.com/vuejs/vue/pull/7890'
+            }
+        ];
+
+        let currentIndex = -1;
+
+        function renderList() {
+            const listContainer = document.getElementById('item-list');
+            listContainer.innerHTML = '';
+
+            githubItems.forEach((item, index) => {
+                const itemEl = document.createElement('div');
+                itemEl.className = `list-item ${index === currentIndex ? 'active' : ''}`;
+                itemEl.innerHTML = `
+                    <div class="list-item-header">
+                        <div class="list-item-source">${item.type}</div>
+                        <div class="list-item-time">#${item.number}</div>
+                    </div>
+                    <div class="list-item-title">${item.title}</div>
+                    <div class="list-item-preview">${item.repo}</div>
+                `;
+                itemEl.onclick = () => selectItem(index);
+                listContainer.appendChild(itemEl);
+            });
+
+            document.getElementById('queue-count').textContent = githubItems.length;
+        }
+
+        function selectItem(index) {
+            currentIndex = index;
+            const item = githubItems[index];
+
+            document.getElementById('current-item-title').textContent = `${item.type} #${item.number}: ${item.title}`;
+            document.getElementById('current-item-info').textContent = `Repository: ${item.repo}`;
+            document.getElementById('github-iframe').src = item.url;
+
+            renderList();
+        }
+
+        // Initial render
+        renderList();
+
+        // Note: Many sites prevent iframe embedding via X-Frame-Options header
+        // In a real app, you might need to use a proxy or API integration instead
+    </script>
+</body>
+</html>
